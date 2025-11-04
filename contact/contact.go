@@ -18,39 +18,49 @@ type Contact struct {
 }
 
 // var contacts []Contact
-var contacts = make(map[int]Contact)
-var contactIDCounter int = 1
+var contacts = make(map[int]*Contact)
+var contactIDCounter int = 0
 
 // Add
-func AddContact() string {
-
+func AddContact() {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter name: ")
 	name, _ := reader.ReadString('\n')
+	name = strings.TrimSpace(name)
 
 	fmt.Print("Enter email: ")
 	email, _ := reader.ReadString('\n')
+	email = strings.TrimSpace(email)
 
-	contacts[contactIDCounter] = Contact{ID: contactIDCounter, Name: name, Email: email}
-
-	contactIDCounter++
-
-	return "✅ Contact added successfully!"
-}
-
-func AddContactWithFlag(name string, email string) {
-	if name == "" || email == "" {
-		fmt.Println("⚠️ Nom et email requis.")
+	if name == "" && email == "" {
+		fmt.Println("❌ Name and email are required")
 		return
 	}
 
-	contacts[contactIDCounter] = Contact{
+	contactIDCounter++
+	newContact := &Contact{
 		ID:    contactIDCounter,
 		Name:  name,
 		Email: email,
 	}
-	fmt.Printf("✅ Contact ajouté : [%d] %s - %s\n", contactIDCounter, name, email)
+	contacts[contactIDCounter] = newContact
+	fmt.Println("✅ Contact added successfully.")
+}
+
+func AddContactWithFlag(name string, email string) {
+	if name == "" && email == "" {
+		fmt.Println("❌ Name and email are required")
+		return
+	}
+
 	contactIDCounter++
+	newContact := &Contact{
+		ID:    contactIDCounter,
+		Name:  name,
+		Email: email,
+	}
+	contacts[contactIDCounter] = newContact
+	fmt.Println("✅ Contact added successfully.")
 }
 
 // Delete
@@ -81,8 +91,7 @@ func DeleteContact() {
 }
 
 // Update
-func UpdateContact() {
-
+func (c *Contact) UpdateContact() {
 	if len(contacts) == 0 {
 		fmt.Println("No contact.")
 		return
@@ -99,7 +108,7 @@ func UpdateContact() {
 		return
 	}
 
-	if _, ok := contacts[idContact]; ok {
+	if c, ok := contacts[idContact]; ok {
 		fmt.Print("Enter new name: ")
 		name, _ := reader.ReadString('\n')
 		name = strings.TrimSpace(name)
@@ -108,12 +117,12 @@ func UpdateContact() {
 		email, _ := reader.ReadString('\n')
 		email = strings.TrimSpace(email)
 
-		contacts[idContact] = Contact{ID: idContact, Name: name, Email: email}
+		c.Name = name
+		c.Email = email
 		fmt.Println("✅ Contact updated.")
 	} else {
 		fmt.Println("⚠️ Contact not found.")
 	}
-
 }
 
 // List
@@ -122,7 +131,6 @@ func GetContact() {
 		fmt.Println("No contact.")
 		return
 	}
-	fmt.Println("📋 Liste des contacts :")
 	for _, c := range contacts {
 		fmt.Printf("[%d] %s - %s\n", c.ID, c.Name, c.Email)
 	}
