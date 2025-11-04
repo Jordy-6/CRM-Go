@@ -6,20 +6,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/Jordy-6/CRM-Go/internal/storage"
 )
 
 // Api call for contact
 
-// Contact type
-type Contact struct {
-	ID    int
-	Name  string
-	Email string
-}
-
-// var contacts []Contact
-var contacts = make(map[int]*Contact)
-var contactIDCounter int = 0
+var store = storage.NewMemoryStore()
 
 // Add
 func AddContact() {
@@ -32,45 +25,41 @@ func AddContact() {
 	email, _ := reader.ReadString('\n')
 	email = strings.TrimSpace(email)
 
-	if name == "" && email == "" {
+	if name == "" || email == "" {
 		fmt.Println("❌ Name and email are required")
 		return
 	}
 
-	contactIDCounter++
-	newContact := &Contact{
-		ID:    contactIDCounter,
+	newContact := &storage.Contact{
 		Name:  name,
 		Email: email,
 	}
-	contacts[contactIDCounter] = newContact
+
+	error := store.Add(newContact)
+	if error != nil {
+		fmt.Println("❌ Error adding contact:", error)
+		return
+	}
+
 	fmt.Println("✅ Contact added successfully.")
 }
 
 func AddContactWithFlag(name string, email string) {
-	if name == "" && email == "" {
+	if name == "" || email == "" {
 		fmt.Println("❌ Name and email are required")
 		return
 	}
 
-	contactIDCounter++
-	newContact := &Contact{
-		ID:    contactIDCounter,
+	newContact := &storage.Contact{
 		Name:  name,
 		Email: email,
 	}
-	contacts[contactIDCounter] = newContact
+	store.Add(newContact)
 	fmt.Println("✅ Contact added successfully.")
 }
 
 // Delete
 func DeleteContact() {
-
-	if len(contacts) == 0 {
-		fmt.Println("No contact.")
-		return
-	}
-
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Id contact to delete : ")
 
@@ -82,21 +71,16 @@ func DeleteContact() {
 		return
 	}
 
-	if _, ok := contacts[idContact]; ok {
-		delete(contacts, idContact)
-		fmt.Println("🗑️ Contact deleted.")
+	err = store.Delete(idContact)
+	if err != nil {
+		fmt.Println("⚠️", err)
 	} else {
-		fmt.Println("⚠️ Contact not found.")
+		fmt.Println("🗑️ Contact deleted.")
 	}
 }
 
 // Update
-func (c *Contact) UpdateContact() {
-	if len(contacts) == 0 {
-		fmt.Println("No contact.")
-		return
-	}
-
+func UpdateContact() {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Id to update : ")
 
@@ -108,30 +92,32 @@ func (c *Contact) UpdateContact() {
 		return
 	}
 
-	if c, ok := contacts[idContact]; ok {
-		fmt.Print("Enter new name: ")
-		name, _ := reader.ReadString('\n')
-		name = strings.TrimSpace(name)
+	fmt.Print("Enter new name: ")
+	name, _ := reader.ReadString('\n')
+	name = strings.TrimSpace(name)
 
-		fmt.Print("Enter new email: ")
-		email, _ := reader.ReadString('\n')
-		email = strings.TrimSpace(email)
+	fmt.Print("Enter new email: ")
+	email, _ := reader.ReadString('\n')
+	email = strings.TrimSpace(email)
 
-		c.Name = name
-		c.Email = email
-		fmt.Println("✅ Contact updated.")
+	newContact := &storage.Contact{
+		ID:    idContact,
+		Name:  name,
+		Email: email,
+	}
+
+	err = store.Update(idContact, newContact)
+	if err != nil {
+		fmt.Println("⚠️", err)
 	} else {
-		fmt.Println("⚠️ Contact not found.")
+		fmt.Println("✅ Contact updated.")
 	}
 }
 
 // List
 func GetContact() {
-	if len(contacts) == 0 {
-		fmt.Println("No contact.")
-		return
-	}
-	for _, c := range contacts {
-		fmt.Printf("[%d] %s - %s\n", c.ID, c.Name, c.Email)
+	err := store.GetAll()
+	if err != nil {
+		fmt.Println("⚠️", err)
 	}
 }

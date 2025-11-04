@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"bufio"
@@ -11,8 +11,7 @@ import (
 	"github.com/Jordy-6/CRM-Go/contact"
 )
 
-func main() {
-
+func Run() {
 	addFlag := flag.Bool("add", false, "Ajouter un contact via flags")
 	nameFlag := flag.String("name", "", "Nom du contact")
 	emailFlag := flag.String("email", "", "Email du contact")
@@ -42,6 +41,7 @@ func homePage() {
 	choice = strings.TrimSpace(choice)
 
 	choiceInt, _ := strconv.Atoi(choice)
+	c := &contact.Contact{}
 
 	switch choiceInt {
 	case 1:
@@ -51,10 +51,14 @@ func homePage() {
 	case 3:
 		contact.DeleteContact()
 	case 4:
-		contact.UpdateContact()
+		c.UpdateContact()
 	case 5:
 		os.Exit(0)
 	default:
 		fmt.Println("Invalid choice")
 	}
+}
+
+func AddContact(storage struct) {
+	
 }
