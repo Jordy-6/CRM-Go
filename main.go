@@ -1,8 +1,5 @@
 package main
 
-// Display home page
-// Leave home page
-
 import (
 	"bufio"
 	"flag"
@@ -45,17 +42,17 @@ func homePage() {
 	choice = strings.TrimSpace(choice)
 
 	choiceInt, _ := strconv.Atoi(choice)
+	c := &contact.Contact{}
 
 	switch choiceInt {
 	case 1:
-
 		contact.AddContact()
 	case 2:
 		contact.GetContact()
 	case 3:
 		contact.DeleteContact()
 	case 4:
-		contact.UpdateContact()
+		c.UpdateContact()
 	case 5:
 		os.Exit(0)
 	default:
