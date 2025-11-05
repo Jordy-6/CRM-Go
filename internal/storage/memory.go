@@ -24,7 +24,7 @@ func (m *MemoryStore) Add(contact *Contact) error {
 func (m *MemoryStore) Update(id int, contact *Contact) error {
 
 	if _, exists := m.contacts[id]; !exists {
-		return fmt.Errorf("Invalid User")
+		return fmt.Errorf("invalid user")
 	}
 
 	m.contacts[id] = contact
@@ -35,7 +35,7 @@ func (m *MemoryStore) Update(id int, contact *Contact) error {
 func (m *MemoryStore) Delete(id int) error {
 
 	if _, exists := m.contacts[id]; !exists {
-		return fmt.Errorf("Invalid User")
+		return fmt.Errorf("invalid user")
 	}
 
 	delete(m.contacts, id)
@@ -45,7 +45,7 @@ func (m *MemoryStore) Delete(id int) error {
 
 func (m *MemoryStore) GetAll() error {
 	if len(m.contacts) == 0 {
-		return fmt.Errorf("No contacts")
+		return fmt.Errorf("no contacts")
 	}
 
 	for _, c := range m.contacts {

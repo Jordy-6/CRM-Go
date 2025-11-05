@@ -1,10 +1,10 @@
 package storage
 
 type Storer interface {
-	Add(message string) error
-	Update(id int, newMessage string) error
+	Add(contact *Contact) error
+	Update(id int, contact *Contact) error
 	Delete(id int) error
-	GetAll() ([]string, error)
+	GetAll() error
 }
 
 type Contact struct {
