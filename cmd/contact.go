@@ -1,0 +1,171 @@
+package cmd
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+
+	"github.com/Jordy-6/CRM-Go/internal/storage"
+	"github.com/spf13/cobra"
+)
+
+var store storage.Storer
+
+func SetStore(s storage.Storer) {
+	store = s
+}
+
+var addCmd = &cobra.Command{
+	Use:   "add",
+	Short: "Add a new contact to the CRM",
+	Long:  `add is a command that allows you to add a new contact to the CRM system.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Enter name: ")
+		name, _ := reader.ReadString('\n')
+		name = strings.TrimSpace(name)
+
+		fmt.Print("Enter email: ")
+		email, _ := reader.ReadString('\n')
+		email = strings.TrimSpace(email)
+
+		if name == "" || email == "" {
+			fmt.Println("❌ Name and email are required")
+			return
+		}
+
+		newContact := &storage.Contact{
+			Name:  name,
+			Email: email,
+		}
+
+		error := store.Add(newContact)
+		if error != nil {
+			fmt.Println("❌ Error adding contact:", error)
+			return
+		}
+
+		fmt.Println("✅ Contact added successfully.")
+	},
+}
+
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a contact from the CRM",
+	Long:  `delete is a command that allows you to delete a contact from the CRM system.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Id contact to delete : ")
+
+		input, _ := reader.ReadString('\n')
+		idContact, err := strconv.Atoi(strings.TrimSpace(input))
+
+		if err != nil {
+			fmt.Println("❌ ID invalide.")
+			return
+		}
+
+		err = store.Delete(idContact)
+		if err != nil {
+			fmt.Println("⚠️", err)
+		} else {
+			fmt.Println("🗑️ Contact deleted.")
+		}
+	},
+}
+
+var updateCmd = &cobra.Command{
+	Use:   "update",
+	Short: "Update a contact in the CRM",
+	Long:  `update is a command that allows you to update a contact in the CRM system.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		reader := bufio.NewReader(os.Stdin)
+		fmt.Print("Id to update : ")
+
+		input, _ := reader.ReadString('\n')
+		idContact, err := strconv.Atoi(strings.TrimSpace(input))
+
+		if err != nil {
+			fmt.Println("❌ ID invalide.")
+			return
+		}
+
+		fmt.Print("Enter new name: ")
+		name, _ := reader.ReadString('\n')
+		name = strings.TrimSpace(name)
+
+		fmt.Print("Enter new email: ")
+		email, _ := reader.ReadString('\n')
+		email = strings.TrimSpace(email)
+
+		newContact := &storage.Contact{
+			ID:    idContact,
+			Name:  name,
+			Email: email,
+		}
+
+		err = store.Update(idContact, newContact)
+		if err != nil {
+			fmt.Println("⚠️", err)
+		} else {
+			fmt.Println("✅ Contact updated.")
+		}
+	},
+}
+
+var getCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all contacts in the CRM",
+	Long:  `list is a command that retrieves and displays all contacts stored in the CRM system.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := store.GetAll()
+		if err != nil {
+			fmt.Println("⚠️", err)
+		}
+	},
+}
+
+func homePage(store interface{}) {
+	fmt.Println("Welcome to the CRM System")
+	fmt.Println("1. Add Contacts")
+	fmt.Println("2. List Contacts")
+	fmt.Println("3. Delete Contact")
+	fmt.Println("4. Update Contact")
+	fmt.Println("5. Exit")
+
+	reader := bufio.NewReader(os.Stdin)
+	fmt.Print("Enter choice: ")
+
+	choice, _ := reader.ReadString('\n')
+	choice = strings.TrimSpace(choice)
+
+	choiceInt, _ := strconv.Atoi(choice)
+
+	switch choiceInt {
+	case 1:
+		os.Args = []string{"crm-go", "add"}
+		rootCmd.Execute()
+	case 2:
+		os.Args = []string{"crm-go", "list"}
+		rootCmd.Execute()
+	case 3:
+		os.Args = []string{"crm-go", "delete"}
+		rootCmd.Execute()
+	case 4:
+		os.Args = []string{"crm-go", "update"}
+		rootCmd.Execute()
+	case 5:
+		os.Exit(0)
+	default:
+		fmt.Println("Invalid choice")
+	}
+}
+
+func init() {
+	rootCmd.AddCommand(addCmd)
+	rootCmd.AddCommand(deleteCmd)
+	rootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(getCmd)
+}
