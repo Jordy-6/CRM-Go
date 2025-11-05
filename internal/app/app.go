@@ -8,11 +8,15 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Jordy-6/CRM-Go/cmd"
 	"github.com/Jordy-6/CRM-Go/contact"
 	"github.com/Jordy-6/CRM-Go/internal/storage"
 )
 
 func Run(store storage.Storer) {
+
+	cmd.SetStore(store)
+
 	addFlag := flag.Bool("add", false, "Ajouter un contact via flags")
 	nameFlag := flag.String("name", "", "Nom du contact")
 	emailFlag := flag.String("email", "", "Email du contact")
@@ -23,11 +27,11 @@ func Run(store storage.Storer) {
 	}
 
 	for {
-		homePage(store)
+		homePage()
 	}
 }
 
-func homePage(store storage.Storer) {
+func homePage() {
 	fmt.Println("Welcome to the CRM System")
 	fmt.Println("1. Add Contacts")
 	fmt.Println("2. List Contacts")
@@ -45,13 +49,17 @@ func homePage(store storage.Storer) {
 
 	switch choiceInt {
 	case 1:
-		contact.AddContact(store)
+		os.Args = []string{"crm-go", "add"}
+		cmd.Execute()
 	case 2:
-		contact.GetContact(store)
+		os.Args = []string{"crm-go", "list"}
+		cmd.Execute()
 	case 3:
-		contact.DeleteContact(store)
+		os.Args = []string{"crm-go", "delete"}
+		cmd.Execute()
 	case 4:
-		contact.UpdateContact(store)
+		os.Args = []string{"crm-go", "update"}
+		cmd.Execute()
 	case 5:
 		os.Exit(0)
 	default:
