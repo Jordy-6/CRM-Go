@@ -9,24 +9,25 @@ import (
 	"strings"
 
 	"github.com/Jordy-6/CRM-Go/contact"
+	"github.com/Jordy-6/CRM-Go/internal/storage"
 )
 
-func Run() {
+func Run(store storage.Storer) {
 	addFlag := flag.Bool("add", false, "Ajouter un contact via flags")
 	nameFlag := flag.String("name", "", "Nom du contact")
 	emailFlag := flag.String("email", "", "Email du contact")
 	flag.Parse()
 
 	if *addFlag {
-		contact.AddContactWithFlag(*nameFlag, *emailFlag)
+		contact.AddContactWithFlag(store, *nameFlag, *emailFlag)
 	}
 
 	for {
-		homePage()
+		homePage(store)
 	}
 }
 
-func homePage() {
+func homePage(store storage.Storer) {
 	fmt.Println("Welcome to the CRM System")
 	fmt.Println("1. Add Contacts")
 	fmt.Println("2. List Contacts")
@@ -41,24 +42,19 @@ func homePage() {
 	choice = strings.TrimSpace(choice)
 
 	choiceInt, _ := strconv.Atoi(choice)
-	c := &contact.Contact{}
 
 	switch choiceInt {
 	case 1:
-		contact.AddContact()
+		contact.AddContact(store)
 	case 2:
-		contact.GetContact()
+		contact.GetContact(store)
 	case 3:
-		contact.DeleteContact()
+		contact.DeleteContact(store)
 	case 4:
-		c.UpdateContact()
+		contact.UpdateContact(store)
 	case 5:
 		os.Exit(0)
 	default:
 		fmt.Println("Invalid choice")
 	}
-}
-
-func AddContact(storage struct) {
-	
 }

@@ -12,10 +12,8 @@ import (
 
 // Api call for contact
 
-var store = storage.NewMemoryStore()
-
 // Add
-func AddContact() {
+func AddContact(store storage.Storer) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Enter name: ")
 	name, _ := reader.ReadString('\n')
@@ -44,7 +42,7 @@ func AddContact() {
 	fmt.Println("✅ Contact added successfully.")
 }
 
-func AddContactWithFlag(name string, email string) {
+func AddContactWithFlag(store storage.Storer, name string, email string) {
 	if name == "" || email == "" {
 		fmt.Println("❌ Name and email are required")
 		return
@@ -59,7 +57,7 @@ func AddContactWithFlag(name string, email string) {
 }
 
 // Delete
-func DeleteContact() {
+func DeleteContact(store storage.Storer) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Id contact to delete : ")
 
@@ -80,7 +78,7 @@ func DeleteContact() {
 }
 
 // Update
-func UpdateContact() {
+func UpdateContact(store storage.Storer) {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print("Id to update : ")
 
@@ -115,7 +113,7 @@ func UpdateContact() {
 }
 
 // List
-func GetContact() {
+func GetContact(store storage.Storer) {
 	err := store.GetAll()
 	if err != nil {
 		fmt.Println("⚠️", err)

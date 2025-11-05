@@ -5,8 +5,10 @@ package main
 
 import (
 	"github.com/Jordy-6/CRM-Go/internal/app"
+	"github.com/Jordy-6/CRM-Go/internal/storage"
 )
 
 func main() {
-	app.Run()
+	var store = storage.NewMemoryStore()
+	app.Run(store)
 }
