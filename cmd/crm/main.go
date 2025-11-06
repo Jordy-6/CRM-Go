@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// Initialiser le store
-	store := storage.NewMemoryStore()
+	store := storage.NewJsonStore()
 
 	// Configurer le store pour Cobra
 	cmd.SetStore(store)
