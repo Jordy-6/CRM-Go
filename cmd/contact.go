@@ -127,42 +127,6 @@ var getCmd = &cobra.Command{
 	},
 }
 
-func homePage(store interface{}) {
-	fmt.Println("Welcome to the CRM System")
-	fmt.Println("1. Add Contacts")
-	fmt.Println("2. List Contacts")
-	fmt.Println("3. Delete Contact")
-	fmt.Println("4. Update Contact")
-	fmt.Println("5. Exit")
-
-	reader := bufio.NewReader(os.Stdin)
-	fmt.Print("Enter choice: ")
-
-	choice, _ := reader.ReadString('\n')
-	choice = strings.TrimSpace(choice)
-
-	choiceInt, _ := strconv.Atoi(choice)
-
-	switch choiceInt {
-	case 1:
-		os.Args = []string{"crm-go", "add"}
-		rootCmd.Execute()
-	case 2:
-		os.Args = []string{"crm-go", "list"}
-		rootCmd.Execute()
-	case 3:
-		os.Args = []string{"crm-go", "delete"}
-		rootCmd.Execute()
-	case 4:
-		os.Args = []string{"crm-go", "update"}
-		rootCmd.Execute()
-	case 5:
-		os.Exit(0)
-	default:
-		fmt.Println("Invalid choice")
-	}
-}
-
 func init() {
 	rootCmd.AddCommand(addCmd)
 	rootCmd.AddCommand(deleteCmd)
