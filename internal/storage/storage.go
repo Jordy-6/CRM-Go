@@ -1,5 +1,7 @@
 package storage
 
+import "gorm.io/gorm"
+
 type Storer interface {
 	Add(contact *Contact) error
 	Update(id int, contact *Contact) error
@@ -8,7 +10,8 @@ type Storer interface {
 }
 
 type Contact struct {
-	ID    int    `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
+	gorm.Model
+	ID    int    `json:"id" gorm:"primaryKey"`
+	Name  string `json:"name" gorm:"type:varchar(100)"`
+	Email string `json:"email" gorm:"type:varchar(100)"`
 }
