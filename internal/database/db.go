@@ -3,6 +3,7 @@ package database
 import (
 	"log"
 
+	"github.com/Jordy-6/CRM-Go/internal/config"
 	"github.com/Jordy-6/CRM-Go/internal/storage"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
@@ -11,7 +12,7 @@ import (
 var DB *gorm.DB
 
 func ConnectDB() {
-	dbName := "CRM.db"
+	dbName := config.AppConfig.Database.Name
 
 	database, err := gorm.Open(sqlite.Open(dbName), &gorm.Config{})
 	if err != nil {

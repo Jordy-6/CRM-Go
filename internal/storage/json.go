@@ -128,11 +128,11 @@ func (m *JsonStore) GetAll() error {
 		return fmt.Errorf("impossible de parser le fichier %s: %w", path, err)
 	}
 
-	if len(m.contacts) == 0 {
+	if len(contacts) == 0 {
 		return fmt.Errorf("no contacts")
 	}
 
-	for _, c := range m.contacts {
+	for _, c := range contacts {
 		fmt.Printf("[%d] %s - %s\n", c.ID, c.Name, c.Email)
 	}
 	return nil

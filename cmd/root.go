@@ -19,8 +19,3 @@ func Execute() {
 		os.Exit(1)
 	}
 }
-
-func init() {
-	// Here you can define flags and configuration settings.
-	// eg: rootCmd.Flags().StringP("config", "c", "", "Path to the config file")
-}
