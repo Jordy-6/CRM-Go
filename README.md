@@ -2,93 +2,186 @@
 
 ## 🎯 Project Overview
 
-This project is a **mini CRM (Customer Relationship Management)** built with **Go (Golang)**.
-It allows you to **manage a list of contacts** directly from the command line.
+This project is a **mini CRM (Customer Relationship Management)** built with **Go (Golang)** using **Cobra CLI** and **Viper** for configuration management.
+It allows you to **manage contacts** from the command line with multiple storage backends.
 
 Each contact includes:
+* a unique **ID** (auto-incremented)
+* a **name**
+* an **email address**
 
-* a unique **ID** (auto-incremented),
-* a **name**,
-* an **email address**.
+---
+
+## ⚙️ Features
+
+### 🔧 Multiple Storage Backends
+- **Memory**: In-memory storage (data lost on exit)
+- **JSON**: File-based storage in `contacts.json`
+- **GORM**: SQLite database storage
+
+### 🚀 Cobra CLI Commands
+```bash
+# Add a contact (interactive)
+go run .\cmd\crm add
+
+# List all contacts
+go run .\cmd\crm list
+
+# Delete a contact (interactive)
+go run .\cmd\crm delete
+
+# Update a contact (interactive)
+go run .\cmd\crm update
+
+# Show help
+go run .\cmd\crm --help
+```
+
+### ⚙️ Configuration via YAML
+Storage type is configurable via `config/config.yaml`:
+
+```yaml
+database:
+  name: CRM.db
+
+storer:
+  type: json  # Options: memory, json, gorm
+```
 
 ---
 
-## ⚙️ Main Features
-
-### 🧭 Interactive Mode (Menu)
-
-When you run:
-
-```bash
-go run .
-```
-
-The application launches an **interactive main menu** that lets you:
-
-1. Add a contact
-2. List all contacts
-3. Delete a contact
-4. Update a contact
-5. Exit the application
-
-### 🚀 Command-Line Flags Mode
-
-You can also **add a contact directly** using flags — no menu needed:
-
-```bash
-go run . -add -name="Jordy" -email="jordy@mail.com"
-```
-
-➡️ Output:
-
-```
-✅ Contact added: [1] Ali - ali@mail.com
-```
-
----
 ## 🏗️ Project Structure
 
 ```
 CRM/
 ├── go.mod
-├── main.go
-└── contact/
-    └── contact.go
+├── go.sum
+├── README.md
+├── config/
+│   └── config.yaml          # Configuration file
+├── cmd/
+│   ├── root.go             # Cobra root command
+│   ├── contact.go          # Contact-related commands
+│   └── crm/
+│       └── main.go         # Application entry point
+├── internal/
+│   ├── config/
+│   │   └── config.go       # Viper configuration loading
+│   ├── database/
+│   │   └── db.go          # GORM database connection
+│   └── storage/
+│       ├── storage.go      # Storage interface
+│       ├── memory.go       # In-memory implementation
+│       ├── json.go         # JSON file implementation
+│       └── gorm.go         # GORM database implementation
+└── contacts.json           # JSON storage file (auto-created)
 ```
-
-### 📁 `contact/contact.go`
-
-Contains the `Contact` struct and related CRUD functions.
-
-### 📁 `main.go`
-
-Entry point of the program — handles **flags** and the **interactive menu**.
 
 ---
 
-## 🚀 How to Run
+## 📦 Installation & Setup
 
-### Run in interactive mode
+### Prerequisites
+- **Go 1.25+** installed
+- **Windows** (PowerShell or CMD)
 
+### 1. Clone & Install Dependencies
 ```bash
-go run .
+git clone <repository-url>
+cd CRM
+go mod tidy
 ```
 
-### Run with flags
+### 2. Configuration
+Edit `config/config.yaml` to choose your storage backend:
 
-Add a contact directly:
+```yaml
+database:
+  name: CRM.db
+
+storer:
+  type: json  # Change to: memory, json, or gorm
+```
+
+### 3. Build (Optional)
+```bash
+go build -o crm.exe .\cmd\crm
+```
+
+---
+
+## 🚀 Usage Examples
+
+### Command Line Interface
 
 ```bash
-go run . -add -name="Jordy" -email="jordy@mail.com"
+# Add a new contact
+PS> go run .\cmd\crm add
+Enter name: Alice
+Enter email: alice@example.com
+✅ Contact added successfully.
+
+# List all contacts
+PS> go run .\cmd\crm list
+📋 Contacts:
+[1] Alice - alice@example.com
+[2] Bob - bob@test.com
+
+# Delete a contact
+PS> go run .\cmd\crm delete
+Id contact to delete : 1
+🗑️ Contact deleted.
+
+# Update a contact
+PS> go run .\cmd\crm update
+Id to update : 2
+Enter new name: Robert
+Enter new email: robert@example.com
+✅ Contact updated.
 ```
+
+### Using Built Executable
+
+```bash
+# After building
+.\crm.exe add
+.\crm.exe list
+.\crm.exe delete
+.\crm.exe update
+```
+
+## 🔧 Storage Backends
+
+### 🧠 Memory Storage
+- **Type**: `memory`
+- **Persistence**: None (data lost on exit)
+- **Use case**: Testing, temporary data
+
+### 📄 JSON Storage
+- **Type**: `json`
+- **File**: `contacts.json`
+- **Persistence**: File-based
+- **Use case**: Simple file storage
+
+### 🗄️ Database Storage (GORM)
+- **Type**: `gorm`
+- **Database**: SQLite (`CRM.db`)
+- **Persistence**: Database
+- **Use case**: Production, advanced features
+
+---
+
+## 🛠️ Technology Stack
+
+- **Language**: Go 1.25+
+- **CLI Framework**: [Cobra](https://github.com/spf13/cobra)
+- **Configuration**: [Viper](https://github.com/spf13/viper)
+- **Database ORM**: [GORM](https://gorm.io/)
+- **SQLite Driver**: [glebarez/sqlite](https://github.com/glebarez/go-sqlite)
+
+---
 
 ## 👨‍💻 Authors
 
-Jordy PEREIRA-ELENGA MAKOUALA Developer
-
-Romain MONMARCHE Developer
-
-
-
-
-Pour ajouter viper dans cobra => command root + persistant prerun
+- **Jordy PEREIRA-ELENGA MAKOUALA** - Developer
+- **Romain MONMARCHE** - Developer
